@@ -1,0 +1,54 @@
+version: 2
+
+sources:
+  - name: retail_erp_bronze
+    description: "Raw ingestion data loaded via Databricks Auto Loader."
+
+    catalog: retail_erp
+    schema: retail_erp_bronze
+
+    tables:
+      - name: accounts_payable
+        description: "Append-only raw accounts payables stream"
+
+      - name: accounts_receivable
+        description: "Append-only raw accounts receivables stream"
+
+      - name: assets
+        description: "Append-only raw assets stream"
+
+      - name: business_partners
+        description: "Append-only raw business_partner stream"
+
+      - name: customers
+        description: "Append-only raw cusotmers stream"
+
+      - name: deliveries
+        description: "Append-only raw deliveries stream"
+      
+      - name: depreciation
+        description: "Append-only raw depreciation stream"
+
+      - name: inventory
+        description: "Append-only raw inventory stream"
+
+      - name: purchase_items
+        description: "Append-only raw purchase_items stream"
+
+      - name: purchases
+        description: "Append-only raw purchases stream"
+
+      - name: sale_items
+        description: "Append-only raw sale_items stream"
+
+      - name: sales
+        description: "Append-only raw sales stream"
+
+      - name: suppliers
+        description: "Append-only raw suppliers stream"
+
+      - name: tenants
+        description: "Append-only raw tenants stream"
+
+      - name: universal_journal
+        description: "Append-only raw universal_journal stream"
