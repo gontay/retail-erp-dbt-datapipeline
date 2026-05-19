@@ -34,7 +34,18 @@ deduplicated as (
 ),
 
 final as (
-    select * from deduplicated
+    select
+        id,
+        asset_code,
+        asset_name,
+        category,
+        acquisition_date,
+        acquisition_cost,
+        useful_life_months,
+        salvage_value,
+        status,
+        dbt_updated_at,
+     from deduplicated
     where rn = 1
 )
 
