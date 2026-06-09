@@ -34,14 +34,18 @@ deduplicated_purchases as(
     select *,
     row_number() over (partition by id order by updated_at desc) as rn
     from transformed_purchases
+),
+
+final_purchases as(
+    select
+        id,
+        supplier_id,
+        purchase_date,
+        total_amount,
+        payment_method,
+        purchase_status,
+        dbt_updated_at
+    from deduplicated_purchases
 )
 
-select
-    id,
-    supplier_id,
-    purchase_date,
-    total_amount,
-    payment_method,
-    purchase_status,
-    dbt_updated_at
- from deduplicated_purchases
+select * from final_purchases

@@ -44,12 +44,14 @@ models:
 
     # Applies to all files under models/silver/
     silver:
+      +catalog: retail_erp
       +materialized: incremental
       +incremental_strategy: merge
       +schema: retail_erp_silver
       +tags: ["layer_silver"]
     # Applies to all files under models/gold/
     gold:
+      +catalog: retail_erp
       +materialized: table      
       +schema: retail_erp_gold
       +tags: ["layer_gold"]

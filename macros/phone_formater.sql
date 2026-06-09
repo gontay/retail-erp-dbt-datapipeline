@@ -27,6 +27,8 @@
                 when length({{ cleaned_digits_column }}) = 11 and left({{ cleaned_digits_column }}, 1) = '1'
                     then concat('+', {{ cleaned_digits_column }})
 
+                when length({{ cleaned_digits_column}}) > 11 and left({{ cleaned_digits_column}}, 3) = '001'
+                    then concat('+', REGEXP_REPLACE({{ cleaned_digits_column}}, '^0+', ''))
 
                 ----------------------------------------------------
                 -- 3. INTERNATIONAL FALLBACK
@@ -34,6 +36,7 @@
                 when length({{ cleaned_digits_column }}) between 11 and 20
                     then concat('+', {{ cleaned_digits_column }})
                 
+
                 else null
             end
     end
