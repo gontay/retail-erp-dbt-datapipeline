@@ -1,9 +1,9 @@
-with raw_source as (
+with raw_business_partners as (
     select * from {{ source('retail_erp_bronze','business_partners')}}
 ),
 
 --transformation
-transformed as (
+transformed_business_partners as (
     select
         cast(id as int ) as id,
         cast(partner_code as string) as partner_code,
@@ -19,20 +19,20 @@ transformed as (
         cast(phone as string) as raw_phone_number,
         regexp_replace(`raw_phone_number`, '[^0-9]', '') as cleaned_phone_digits,
         {{ to_e164('cleaned_phone_digits') }} as phone_e164,
-        cast(`address` as string) as cust_address,
+        cast(`address` as string) as bp_address,
         cast(updated_at as timestamp) as updated_at,
         current_timestamp() as dbt_updated_at
-    from raw_source
+    from raw_business_partners
 ),
 
 --deduplication
-deduplicated as (
+deduplicated_business_partners as (
     select *,
     row_number() over (partition by id order by updated_at desc) as rn
-    from transformed
+    from transformed_business_partners
 ),
 
-final as (
+final_business_partners as (
     select
         id,
         partner_code,
@@ -41,10 +41,10 @@ final as (
         email,
         is_valid_email,
         phone_e164 as phone,
-        cust_address,
+        bp_address,
         dbt_updated_at
-    from deduplicated
+    from deduplicated_business_partners
     where rn = 1
 )
 
-select * from final
+select * from final_business_partners

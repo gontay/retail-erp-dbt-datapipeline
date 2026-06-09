@@ -34,14 +34,18 @@ deduplicated_sales as(
     select *,
     row_number() over (partition by id order by updated_at desc) as rn
     from transformed_sales
+),
+
+final_sales(
+    select
+        id,
+        customer_id,
+        sale_date,
+        total_amount,
+        payment_method,
+        sale_status,
+        dbt_updated_at
+    from deduplicated_sales
 )
 
-select
-    id,
-    customer_id,
-    sale_date,
-    total_amount,
-    payment_method,
-    sale_status,
-    dbt_updated_at
- from deduplicated_sales
+select * from final_sales

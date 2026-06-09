@@ -44,16 +44,19 @@ deduplicated_deliveries as(
     select *,
     row_number() over (partition by tracking_number order by updated_at desc) as rn
     from transformed_deliveries
+),
+final_deliveries as(
+    select
+        tracking_number,
+        sale_id,
+        customer_name,
+        sale_date,
+        sale_amount,
+        delivery_start_date,
+        delivery_complete_date,
+        delivery_fulfilment_state,
+        dbt_updated_at
+    from deduplicated_deliveries
 )
 
-select
-    tracking_number,
-    sale_id,
-    customer_name,
-    sale_date,
-    sale_amount,
-    delivery_start_date,
-    delivery_complete_date,
-    delivery_fulfilment_state,
-    dbt_updated_at
-from deduplicated_deliveries
+select * from final_deliveries

@@ -1,0 +1,366 @@
+
+models:
+  - name: stg_business_partners
+    description: "Cleaned business partner records from raw tables"
+    config: 
+      contract: {enforced: true}
+      on_schema_change: fail  
+    columns:
+      - name: id
+        description: "Unique identifier for a business partner"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+
+      - name: partner_code
+        description: "Unique Code reference of business partner"
+        data_type: string
+        tests:
+          - unique
+          - not_null
+
+      - name: full_name
+        description: "Business Partner Names"
+        data_type: string
+        tests:
+          - not_null
+      
+      - name: partner_type
+        description: "Determines whether business partner is a company or individual"
+        data_type: string
+        tests:
+          - not_null
+      
+      - name: email
+        description: "The email address of a business partner"
+        data_type: string
+      - name: is_valid_email
+        description: "Determines whether email address ingested is valid"
+        data_type: boolean
+      - name: phone
+        description: "Business Partner phone numbers"
+        data_type: string
+      - name: bp_address
+        description: "Business Partner address"
+        data_type: string
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+
+  - name: stg_customers
+    description: "Cleaned customer records from raw tables"
+    config: 
+      contract: {enforced: true}    
+      on_schema_change: fail     
+    columns:
+      - name: id
+        description: "Unique identifier for a customer"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+      - name: business_partner_id
+        description: "Reference to business partner"
+        data_type: int
+        tests:
+          - not_null
+          
+      - name: customer_group
+        description: "Customer tier Customer belong in"
+        data_type: string
+      
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+
+  - name: stg_deliveries
+    description: "Cleaned deliveries records from raw tables"
+    config: 
+      contract: {enforced: true}    
+      on_schema_change: fail     
+    columns:
+      - name: tracking_number
+        description: "tracking number for deliveries"
+        data_type: string
+      - name: sale_id
+        description: "sale pertaining to delivery"
+        data_type: int
+      - name: customer_name
+        description: "customer that requested delivery"
+        data_type: string
+      - name: sale_date
+        description: "Replicated sales transaction date propagated from the upstream sales system into the logistics domain for operational reference and downstream fulfillment processing."
+        data_type: date
+
+      - name: sale_amount
+        description: "Replicated sales transaction amount sourced from the originating sales system. Retained within delivery records to simulate denormalized operational data sharing patterns across distributed services."
+        data_type: decimal(18,2)
+
+      - name: delivery_start_date
+        description: "delivery start date and time from delivery records"
+        data_type: date
+
+      - name: delivery_complete_date
+        description: "delivery completion date and time from delivery records"
+        data_type: date
+
+      - name: delivery_fulfilment_state
+        description: "delivery status from delivery records"
+        data_type: string
+
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+
+  - name: stg_inventory
+    description: "Cleaned inventory records from raw tables"
+    config: 
+      contract: {enforced: true}    
+      on_schema_change: fail     
+    columns:
+      - name: id
+        description: "Unique identifier for a inventory item"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+      - name: sku
+        description: "Store Keeping unit for inventory"
+        data_type: string
+        tests:
+          - not_null
+      - name: product_name
+        description: "Name of product"
+        data_type: string
+        tests:
+          - not_null
+      - name: category
+        description: "product category"
+        data_type: string
+        tests:
+          - not_null
+      - name: unit_price
+        description: "unit price of product"
+        data_type: decimal(18,2)
+        tests:
+          - not_null
+      - name: unit_cost
+        description: "unit cost of product"
+        data_type: decimal(18,2)
+        tests:
+          - not_null
+      - name: quantity_on_hand
+        description: "qauntity of product on hand"
+        data_type: int
+        tests:
+          - not_null
+      - name: is_active
+        description: "status of product being sold"
+        data_type: boolean
+        tests:
+          - not_null
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+        
+  - name: stg_purchase_items
+    description: "Cleaned purchase items record from raw tables"
+    config: 
+      contract: {enforced: true}    
+      on_schema_change: fail     
+    columns:
+      - name: id
+        description: "Unique identifier for a purchase item"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+      - name: purchase_id
+        description: "Id of Purchase that purchase item belongs to"
+        data_type: int
+        tests:
+          - not_null
+      - name: inventory_id
+        description: "Inventory id of item purchase item"
+        data_type: int
+        tests:
+          - not_null
+      - name: quantity
+        description: "amount of item purchased"
+        data_type: decimal(18,2)
+        tests:
+          - not_null        
+      - name: unit_cost
+        description: "unit cost of item purchased"
+        data_type: decimal(18,2)
+        tests:
+          - not_null
+      - name: line_total
+        description: "total cost of item purchased"
+        data_type: decimal(18,2)
+        tests:
+          - not_null
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+        tests:
+          - not_null
+
+  - name: stg_purchases
+    description: "Cleaned purchases records from raw tables"
+    config: 
+      contract: {enforced: true}    
+      on_schema_change: fail     
+    columns:
+      - name: id
+        description: "Unique identifier for a purchases"
+        data_type: int
+        tests:
+          - unique
+          - not_null  
+      - name: supplier_id
+        description: "Supplier identifier"
+        data_type: int
+        tests:
+          - not_null           
+      - name: purchase_date
+        description: "date of purchase"
+        data_type: date
+        tests:
+          - not_null           
+      - name: total_amount
+        description: "total amount in purchase"
+        data_type: decimal(18,2)
+        tests:
+          - not_null     
+      - name: payment_method
+        description: "mode of payment for purchase"
+        data_type: string
+        tests:
+          - not_null     
+      - name: purchase_status
+        description: "state of purchase"
+        data_type: string
+        tests:
+          - not_null             
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+        tests:
+          - not_null
+
+  - name: stg_sale_items
+    description: "Cleaned sale items record from raw tables"
+    config: 
+      contract: {enforced: true}    
+      on_schema_change: fail     
+    columns:
+      - name: id
+        description: "Unique identifier for a business partner"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+      - name: sale_id
+        description: "Id of sale that sale item belongs to"
+        data_type: int
+        tests:
+          - not_null
+      - name: inventory_id
+        description: "Inventory id of item sale item"
+        data_type: int
+        tests:
+          - not_null
+      - name: quantity
+        description: "amount of item sold"
+        data_type: decimal(18,2)
+        tests:
+          - not_null        
+      - name: unit_price
+        description: "unit price of item sale"
+        data_type: decimal(18,2)
+        tests:
+          - not_null
+      - name: line_total
+        description: "total price of item sold"
+        data_type: decimal(18,2)
+        tests:
+          - not_null
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+        tests:
+          - not_null
+
+  - name: stg_sales
+    description: "Cleaned sales records from raw tables"
+    config: 
+      contract: {enforced: true}    
+      on_schema_change: fail     
+    columns:
+      - name: id
+        description: "Unique identifier for a business partner"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Supplier identifier"
+        data_type: int
+        tests:
+          - not_null
+      - name: sale_date
+        description: "date of sale"
+        data_type: date
+        tests:
+          - not_null        
+      - name: total_amount
+        description: "total amount in sale"
+        data_type: decimal(18,2)
+        tests:
+          - not_null        
+      - name: payment_method
+        description: "mode of payment for sale"
+        data_type: string
+        tests:
+          - not_null        
+      - name: sale_status
+        description: "state of sale"
+        data_type: string
+        tests:
+          - not_null        
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+        tests:
+          - not_null
+  - name: stg_vendors
+    description: "Cleaned sales records from raw tables"
+    config: 
+      contract: {enforced: true}    
+      on_schema_change: fail     
+    columns:
+      - name: id
+        description: "Unique identifier for a supplier"
+        data_type: int
+        tests:
+          - unique
+          - not_null
+
+      - name: business_partner_id
+        description: "Reference to business partner"
+        data_type: int
+        tests:
+          - not_null
+          
+      - name: supplier_category
+        description: "category of supplies supplier provides"
+        data_type: string
+        tests:
+          - not_null
+      - name: dbt_updated_at
+        description: "timestamp when table is updated at"
+        data_type: timestamp
+        tests:
+          - not_null        

@@ -23,6 +23,20 @@ deduplicated_inventory as(
     select *,
         row_number() over (partition by id order by updated_at desc) as rn
     from transformed_inventory
+),
+
+final_inventory as(
+    select
+        id,
+        sku,
+        product_name,
+        category,
+        unit_price,
+        unit_cost,
+        quantity_on_hand,
+        is_active,
+        dbt_updated_at
+    from deduplicated_inventory
 )
 
-select * from deduplicated_inventory
+select * from final_inventory
