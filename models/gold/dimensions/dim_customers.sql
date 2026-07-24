@@ -34,6 +34,7 @@ final as (
 
         -- lineage fields (optional but useful)
         customer_updated_at
+        business_partner_updated_at
 
     from joined
 )
