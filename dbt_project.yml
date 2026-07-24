@@ -52,6 +52,16 @@ models:
     # Applies to all files under models/gold/
     gold:
       +catalog: retail_erp
-      +materialized: table      
       +schema: retail_erp_gold
       +tags: ["layer_gold"]
+
+      dimensions:
+        +materialized: table
+
+      facts:
+        +materialized: incremental
+        +incremental_strategy: merge
+
+      mart:
+        +materialized: incremental
+        +incremental_strategy: merge      
